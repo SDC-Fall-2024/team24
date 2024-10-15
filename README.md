@@ -6,11 +6,15 @@
 - Abhinav Maneesh
 
 ### Project Description
-A programming language based on a subset of C, with a hand crafted Virtual Machine to execute code and a transpiler targeting LC3 assembly.
+A programming language based on a subset of C with some additional features,
+with a hand crafted Virtual Machine to execute code,
+a treewalking interpreter written in Java,
+and a transpiler targeting LC3 assembly.
 
 ### Built With
 
 * C
+* Java
 * Make
 
 ## Getting Started
