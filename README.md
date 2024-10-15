@@ -1,44 +1,37 @@
-_This is just a suggested template for the README of your project, feel free to modify this as you wish_
-# \[Project Title\]
+# \[Programming Language\]
 
 ### Team Members
-- Name 1 (Project Lead)
-- Name 2
-- Name 3
+- Mark
+- Adrian Brady
+- Abhinav Maneesh
 
 ### Project Description
-Describe the goal of your project here.
+A programming language based on a subset of C, with a hand crafted Virtual Machine to execute code and a transpiler targeting LC3 assembly.
 
 ### Built With
-- List any languages, frameworks, tools, etc. that your project uses here
+
+* C
+* Make
 
 ## Getting Started
 This is where you give instructions on how to run your project
 
-### Prerequisites
+To build the project, run the command
+```sh
+make build
+```
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm (Node JS)
-  ```sh
-  npm install npm@latest -g
-  ```
+To build a debugging version of the project, run the command
+```sh
+make debug
+```
+
+A binary will be output in the folder `build/bin`
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+Clone the project using Git.
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-## Demo
-If your app is hosted on a published website, include the link here
+```sh
+git clone https://github.com/SDC-Fall-2024/team24.git && cd team24
+```
