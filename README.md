@@ -4,6 +4,7 @@
 - Mark
 - Adrian Brady
 - Abhinav Maneesh
+- Vibhav Sinha
 
 ### Project Description
 A programming language based on a subset of C with some additional features,
