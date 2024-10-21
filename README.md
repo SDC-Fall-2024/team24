@@ -10,7 +10,7 @@
 ### Project Description
 A programming language based on a subset of C with some additional features,
 with a hand crafted Virtual Machine to execute code,
-a treewalking interpreter written in Java.
+and a treewalking interpreter written in Java.
 
 ### Built With
 
