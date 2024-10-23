@@ -1,4 +1,4 @@
-# \[Programming Language\]
+# \[Badgr\]
 
 ### Team Members
 - Mark
@@ -8,9 +8,11 @@
 - Jimmy
 
 ### Project Description
-A programming language based on a subset of C with some additional features,
-with a hand crafted Virtual Machine to execute code,
-and a treewalking interpreter written in Java.
+Badgr is a programming language based on a subset of C with some additional features.
+
+There is 2 parts to the language implementation:
+- A tree-walking interpreter
+- A bytecode compiler and Virtual Machine
 
 ### Built With
 
