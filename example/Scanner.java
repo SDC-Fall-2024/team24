@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 enum TokenType {
-  STRING, COMMA, HASHTAG, IDENTIFIER, EOF
+  STRING, COMMA, HASHTAG, IDENTIFIER, EOF, NUMBER
 }
 
 class Token {
@@ -19,7 +19,7 @@ class Token {
   }
 
   public String toString() {
-    return type + " " + line + " " + lexeme;
+    return type + " " + line + " " + "[ " + lexeme + " ]";
   }
 }
 
@@ -54,12 +54,36 @@ public class Scanner {
         addToken(TokenType.HASHTAG);
         break;
       default:
-        addToken(TokenType.EOF);
+        if (isDigit(c)) {
+          number();
+        } else if (isAlpha(c)) {
+          identifier();
+        }
+
     }
+
+  }
+
+  private void identifier() {
+    while (isAlphaNumeric(peek()))
+      advance();
+    addToken(TokenType.IDENTIFIER);
+  }
+
+  private void number() {
+    while (isDigit(peek()))
+      advance();
+    addToken(TokenType.NUMBER);
   }
 
   private char advance() {
     return source.charAt(current++);
+  }
+
+  private char peek() {
+    if (isAtEnd())
+      return '\0';
+    return source.charAt(current);
   }
 
   private void addToken(TokenType type) {
@@ -69,6 +93,20 @@ public class Scanner {
 
   private boolean isAtEnd() {
     return current >= source.length();
+  }
+
+  private boolean isAlphaNumeric(char c) {
+    return isAlpha(c) || isDigit(c);
+  }
+
+  private boolean isAlpha(char c) {
+    return (c >= 'a' && c <= 'z') ||
+        (c >= 'A' && c <= 'Z') ||
+        (c == '_');
+  }
+
+  private boolean isDigit(char c) {
+    return c >= '0' && c <= '9';
   }
 
   public static void main(String[] args) {
