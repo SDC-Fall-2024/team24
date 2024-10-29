@@ -1,14 +1,17 @@
+package com.team24.badgr;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.util.List;
 
 public class App {
 
   /**
-   * Get commandline arguments to program
+   * This method is the entrypoint to the interpreter. It reads the arguments
+   * passed by the user and determines what to do with those arguments.
    */
   public static void main(String args[]) throws IOException {
     if (args.length > 1) {
@@ -21,11 +24,20 @@ public class App {
     }
   }
 
+  /**
+   * This method reads a file as a source program and passes it along to the
+   * Interpreter.
+   */
   private static void runFile(String path) throws IOException {
     byte[] bytes = Files.readAllBytes(Paths.get(path));
     run(new String(bytes));
   }
 
+  /**
+   * This method starts the interactive Read Eval Print Loop for the interpreter.
+   * The input is passed along to the next stages of the Interpreter for
+   * lexical analysis, semantic analysis, and execution.
+   */
   private static void runRepl() {
     InputStreamReader input = new InputStreamReader(System.in);
     BufferedReader reader = new BufferedReader(input);
@@ -44,16 +56,19 @@ public class App {
     }
   }
 
+  /**
+   * This method communicates with the rest of the interpreter, passing along
+   * the source text to be Tokenized in the Scanner.
+   *
+   * @param source The source program to be executed by the
+   *               interpreter.
+   */
   private static void run(String source) {
-    Scanner scanner = null;
-    try {
-      scanner = new Scanner(System.in);
-      String scanned = scanner.nextLine();
-      System.out.println(scanned); // replace with call to lexical analyzer
-    } finally {
-      if (scanner != null) {
-        scanner.close();
-      }
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+
+    for (Token token : tokens) {
+      System.out.println(token);
     }
   }
 }
