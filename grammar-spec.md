@@ -23,13 +23,15 @@ stmt ->         exprStmt |
 
 expressionStmt -> expression ";" ;
 ifStmt -> "if" "(" expression ")" statement ( "else" stmt )? ;
-forStmt -> "for" "(" ( varDecl | expression )? ";" expression? ";" ( expression | range )? ")" stmt ;
+forStmt -> "for" "(" ( forIterExpr | rangeExpr )? ")" stmt ;
+forIterExpr -> (varDecl | expression)? ";" expression? ";" expression? ;
 returnStmt -> "return" expression? ";" ;
 block -> "{" declaration* "}" ;
 
 expression -> assignment ;
 
-range -> ( NUMBER | IDENTIFIER ) ( ".." | "..=" ) ( NUMBER | IDENTIFIER ) ;
+rangeExpr -> IDENTIFIER ":" range
+range -> ( NUMBER | IDENTIFIER ) ( ".." | "..=" ) ( NUMBER | IDENTIFIER ) ( ":" IDENTIFIER | NUMBER )? ;
 
 assignment -> ( IDENTIFIER "=" )? logic_or ;
 
