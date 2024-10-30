@@ -49,6 +49,7 @@ function -> IDENTIFIER "(" parameters? ")" ( "->" type )? block ;
 parameters -> IDENTIFIER ( "," IDENTIFIER )* ;
 arguments -> expression ( "," expression )* ;
 
+type -> IDENTIFIER ; // Will need to implement making more types based on what users define
 NUMBER -> DIGIT+ ;
 STRING -> "\"" <any character excluding "\""> "\"" ;
 IDENTIFIER -> ALPHA ( ALPHA | DIGIT )* ;
