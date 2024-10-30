@@ -45,7 +45,7 @@ unary ->        ( "-" | "!" ) unary | primary ;
 primary ->      "false" | "true" | IDENTIFIER | NUMBER | "nil" |
                 STRING | "(" expression ")" ;
 
-function -> IDENTIFIER "(" parameters? ")" block ;
+function -> IDENTIFIER "(" parameters? ")" ( "->" type )? block ;
 parameters -> IDENTIFIER ( "," IDENTIFIER )* ;
 arguments -> expression ( "," expression )* ;
 
