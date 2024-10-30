@@ -1,10 +1,12 @@
 TODO:
-- Add classes
 - Add array syntax (perhaps allowing ranges)
 - Add receivers?
 - add structs
 - add mutibility
 - add option types (monads?)
+- add enums
+- add method of creating new types
+- add pointers - `*` for stating a pointer type, `&` for pointer dereference
 
 ```
 program -> declaration* EOF ;
