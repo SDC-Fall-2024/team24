@@ -71,3 +71,11 @@ TRUE, FALSE, NOT, AND, OR, ASSIGN, RANGE, RANGE_INCLUSIVE,
 Keywords:
 RETURN, FOR, IF, FUNCTION, ELSE
 ```
+
+```
+Syntax Examples:
+func (s str) getToken() -> Token {...}
+for (int i = 0; i < 10; i++) {...}
+for (i : 1..100 : 2) {...}
+int i = 0;
+```
