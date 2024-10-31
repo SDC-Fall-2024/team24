@@ -25,8 +25,10 @@ public class App {
   }
 
   /**
-   * This method reads a file as a source program and passes it along to the
-   * Interpreter.
+   * This method reads a source program from a file and executes it through the interpreter
+   * pipeline.
+   * The file contents are read as bytes and converted to a string before being passed
+   * to the scanner.
    */
   private static void runFile(String path) throws IOException {
     byte[] bytes = Files.readAllBytes(Paths.get(path));
@@ -57,8 +59,10 @@ public class App {
   }
 
   /**
-   * This method communicates with the rest of the interpreter, passing along
-   * the source text to be Tokenized in the Scanner.
+  * This method processes the source text through the interpreter pipeline:
+  * 1. Lexical analysis (Scanner) - converts text to tokens
+  * 2. Parsing (TODO)
+  * 3. Execution (TODO)
    *
    * @param source The source program to be executed by the
    *               interpreter.
