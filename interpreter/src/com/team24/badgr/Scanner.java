@@ -44,7 +44,7 @@ public class Scanner {
         newToken(PLUS);
         break;
       case '-':
-        newToken(MINUS);
+        newToken(match('>') ? TYPEARROW : MINUS);
         break;
       case '/': // Could be a comment, divide
         newToken(FSLASH);
