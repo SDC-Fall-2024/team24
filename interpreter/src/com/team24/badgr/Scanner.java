@@ -88,6 +88,7 @@ public class Scanner {
       case '|':
         newToken(match('|') ? OR : ERR);
         break;
+
       case '.':
         if (match('.')) {
           if (match('=')) {
