@@ -99,6 +99,16 @@ public class Scanner {
           newToken(DOT);
         }
         break;
+
+      case ' ':
+      case '\r':
+      case '\t':
+        break;
+
+      case '\n':
+        line++;
+        break;
+
       default:
         if (isDigit(ch)) {
           consumeNumber();
