@@ -31,6 +31,9 @@ public class Scanner {
       case ',':
         newToken(COMMA);
         break;
+      case '"':
+        string();
+        break;
       case ';':
         newToken(SEMICOLON);
         break;
@@ -134,6 +137,25 @@ public class Scanner {
       advance();
 
     newToken(NUMBER, Integer.parseInt(source.substring(start, current)));
+  }
+
+  private void string() {
+    while (peek() != '"' && !isAtEnd()) {
+      if (peek() == '\n') {
+        line++;
+      }
+      advance();
+    }
+
+    if (isAtEnd()) {
+      // add an error, unterminated string
+      return;
+    }
+
+    advance(); // consume closing "
+
+    String stringString = source.substring(start + 1, current - 1);
+    newToken(STRING, stringString);
   }
 
   private void newToken(TokenType type) {
