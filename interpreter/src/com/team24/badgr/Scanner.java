@@ -23,6 +23,8 @@ public class Scanner {
     keywords.put("return", RETURN);
     keywords.put("func", FUNCTION);
     keywords.put("if", IF);
+    keywords.put("else", ELSE);
+    keywords.put("nil", NIL);
     types = new HashMap<>();
   }
 
