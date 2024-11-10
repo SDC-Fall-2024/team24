@@ -8,15 +8,10 @@
 - Jimmy
 
 ### Project Description
-Badgr is a programming language based on a subset of C with some additional features.
-
-There is 2 parts to the language implementation:
-- A tree-walking interpreter
-- A bytecode compiler and Virtual Machine
+Badgr is a programming language based on C with some additional features. It is bulit on a tree-walking interpreter written in Java. The build system uses Make.
 
 ### Built With
 
-* C
 * Java
 * Make
 
