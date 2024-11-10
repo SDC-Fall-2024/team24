@@ -2,6 +2,8 @@ package com.team24.badgr;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import static com.team24.badgr.TokenType.*;
 
 public class Scanner {
@@ -10,6 +12,19 @@ public class Scanner {
   private final String source;
   private char start = 0;
   private char current = 0;
+  private static final Map<String, TokenType> keywords;
+  private static final Map<String, TokenType> types;
+
+  static {
+    keywords = new HashMap<>();
+    keywords.put("true", TRUE);
+    keywords.put("false", FALSE);
+    keywords.put("for", FOR);
+    keywords.put("return", RETURN);
+    keywords.put("func", FUNCTION);
+    keywords.put("if", IF);
+    types = new HashMap<>();
+  }
 
   public Scanner(String source) {
     this.source = source;
@@ -129,7 +144,16 @@ public class Scanner {
     while (isAlphaNumeric(peek()))
       advance();
 
-    newToken(IDENTIFIER);
+    String substr = source.substring(start, current);
+    TokenType keyword = keywords.get(substr);
+    TokenType type = types.get(substr);
+    if (keyword != null) {
+      newToken(keyword, substr);
+    } else if (type != null) {
+      // TODO: new type here
+    } else {
+      newToken(IDENTIFIER, substr);
+    }
   }
 
   private void consumeNumber() {
