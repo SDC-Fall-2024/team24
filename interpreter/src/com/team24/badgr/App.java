@@ -74,5 +74,8 @@ public class App {
     for (Token token : tokens) {
       System.out.println(token);
     }
+
+    Parser parser = new Parser(tokens);
+    System.out.println(new AstPrinter().print(parser.parse()));
   }
 }
