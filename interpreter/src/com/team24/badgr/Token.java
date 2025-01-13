@@ -24,4 +24,8 @@ public class Token {
   public String getText() {
     return lexeme;
   }
+
+  public int getLine() {
+    return line;
+  }
 }

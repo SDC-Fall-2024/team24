@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.team24.badgr.Statement.Expr;
+
+import java.util.ArrayList;
+
 class ParseException extends RuntimeException {
   public ParseException(String message) {
     super(message);
@@ -32,7 +36,7 @@ class Parser {
 
   private void setup() {
     registerPrefix(IDENTIFIER, new NameParselet());
-    registerPrefix(NUMBER, new NameParselet());
+    registerPrefix(NUMBER, new NumberParselet());
     registerPrefix(STRING, new NameParselet());
 
     registerPrefix(FALSE, new NameParselet());
@@ -61,9 +65,36 @@ class Parser {
     setup();
   }
 
-  public Expression parse() {
-    Expression a = parseExpression(0);
-    return a;
+  public List<Statement> parse() {
+    List<Statement> statements = new ArrayList<>();
+    while (!isAtEnd()) {
+      statements.add(statement());
+    }
+
+    return statements;
+  }
+
+  private Statement statement() {
+    //Substitute print with FOR to test fucntionality
+    if (match(FOR)) return printStatement();
+    return expressionStatement();
+  }
+
+  private Statement expressionStatement() {
+    try{
+      Expression expression = parseExpression(0);
+      consume(SEMICOLON);
+      return new Statement.Expr(expression);
+    } catch(Exception e) {
+      App.runtimeError(new RuntimeError(lookAhead(0), e.getMessage()));
+      return null;
+    }
+  }
+  
+  private Statement printStatement() {
+    Expression value = parseExpression(0);
+    consume(SEMICOLON);
+    return new Statement.Print(value);
   }
 
   public Token consume() {
@@ -74,11 +105,21 @@ class Parser {
     return tokens.get(current++);
   }
 
-  public void consume(TokenType type) {
+  public Token consume(TokenType type) {
     Token token = consume();
     if (token.getType() != type) {
       throw new ParseException("Expected " + type + " but got " + token.getType());
     }
+    return token;
+  }
+
+  private Boolean match(TokenType type) {
+    if (lookAhead(0).getType() == type) {
+      consume();
+      return true;
+    }
+
+    return false;
   }
 
   private Token lookAhead(int distance) {
@@ -87,6 +128,14 @@ class Parser {
     }
 
     return tokens.get(current + distance);
+  }
+
+  private Boolean isAtEnd() {
+    return lookAhead(0).getType() == EOF;
+  }
+
+  private Token previous() {
+    return tokens.get(current - 1);
   }
   
   public void registerPrefix(TokenType token, PrefixParselet parselet) {
@@ -132,11 +181,38 @@ class Parser {
     return left;
   }
 
+  private void synchronize() {
+    consume();
+
+    while (!isAtEnd()) {
+      if (previous().getType() == SEMICOLON) return;
+
+      switch (lookAhead(0).getType()) {
+        case FUNCTION:
+        case ASSIGN:
+        case FOR:
+        case IF:
+        case RETURN:
+          return;
+        default:
+          break;
+      }
+
+      consume();
+    }
+  }
+
 }
 
 class NameParselet implements PrefixParselet {
   public Expression parse(Parser parser, Token token) {
     return new Expression.Literal(token.getText());
+  }
+}
+
+class NumberParselet implements PrefixParselet {
+  public Expression parse(Parser parser, Token token) {
+    return new Expression.Literal(Double.parseDouble(token.getText()));
   }
 }
 

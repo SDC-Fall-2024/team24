@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 public class App {
-
+  static Boolean hadError = false;
   /**
    * This method is the entrypoint to the interpreter. It reads the arguments
    * passed by the user and determines what to do with those arguments.
@@ -75,7 +75,25 @@ public class App {
       System.out.println(token);
     }
 
+
     Parser parser = new Parser(tokens);
-    System.out.println(new AstPrinter().print(parser.parse()));
+    // System.out.println(new AstPrinter().print(parser.parse()));
+    List<Statement> statements = parser.parse();
+
+    Interpreter interpreter = new Interpreter();
+
+    if(hadError){
+      hadError = false;
+      return;
+    }
+
+    interpreter.interpret(statements);
   }
+
+  static void runtimeError(RuntimeError error) {
+    System.err.println(error.getMessage() +
+        "\n[line " + error.token.getLine() + "]");
+    hadError = true;
+  }
+  
 }
