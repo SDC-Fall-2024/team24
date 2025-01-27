@@ -35,7 +35,10 @@ class Parser {
       new HashMap<TokenType, InfixParselet>();
 
   private void setup() {
-    registerPrefix(IDENTIFIER, new NameParselet());
+
+    Variable.varTypes.put("int", 0);
+
+    registerPrefix(IDENTIFIER, new VarParselet());
     registerPrefix(NUMBER, new NumberParselet());
     registerPrefix(STRING, new NameParselet());
 
@@ -68,10 +71,25 @@ class Parser {
   public List<Statement> parse() {
     List<Statement> statements = new ArrayList<>();
     while (!isAtEnd()) {
-      statements.add(statement());
+      statements.add(declaration());
     }
 
     return statements;
+  }
+
+  private Statement declaration() {
+    try {
+      if (detectVarDec()){
+        consume();
+        System.out.println("Var Declaration");
+        // return varDeclaration(); // Commented out for now until fully implemented
+      } 
+
+      return statement();
+    } catch (ParseException error) {
+      synchronize();
+      return null;
+    }
   }
 
   private Statement statement() {
@@ -202,6 +220,29 @@ class Parser {
     }
   }
 
+  private Statement varDeclaration() {
+
+    Token name = consume(IDENTIFIER);
+
+    Expression initializer = null;
+    if (match(EQ)) {
+      initializer = parseExpression(0);
+    }
+
+    consume(SEMICOLON);
+    return new Statement.Var(name, initializer);
+  }
+
+  private Boolean detectVarDec(){
+    return Variable.varTypes.containsKey(lookAhead(0).getText());
+  }
+
+}
+
+class VarParselet implements PrefixParselet {
+  public Expression parse(Parser parser, Token token) {
+    return new Expression.Variable(token);
+  }
 }
 
 class NameParselet implements PrefixParselet {

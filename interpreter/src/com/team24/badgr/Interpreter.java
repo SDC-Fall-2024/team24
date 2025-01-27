@@ -86,7 +86,7 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
     }
 
     @Override
-    public Void visitExpressionStatement(Statement.Expr stmt) {
+    public Void visitExprStatement(Statement.Expr stmt) {
         evaluate(stmt.expression);
         return null;
     }
