@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.team24.badgr.Statement.Expr;
-
 import java.util.ArrayList;
 
 class ParseException extends RuntimeException {
@@ -82,7 +80,7 @@ class Parser {
       if (detectVarDec()){
         consume();
         System.out.println("Var Declaration");
-        // return varDeclaration(); // Commented out for now until fully implemented
+        return varDeclaration();
       } 
 
       return statement();

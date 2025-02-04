@@ -3,6 +3,13 @@ package com.team24.badgr;
 import java.util.List;
 
 class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>{
+    private Environment environment = new Environment();
+
+    @Override
+    public Object visitVariableExpression(Expression.Variable expr) {
+        return environment.get(expr.name);
+    }
+
     @Override
     public Object visitLiteralExpression(Expression.Literal expr) {
         return expr.value;
@@ -98,6 +105,17 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
         return null;
     }
 
+    @Override
+    public Void visitVarStatement(Statement.Var stmt) {
+      Object value = null;
+      if (stmt.initializer != null) {
+        value = evaluate(stmt.initializer);
+      }
+  
+      environment.define(stmt.name.getText(), value);
+      return null;
+    }
+
     private boolean isTruthy(Object object) {
         if (object == null) return false;
         if (object instanceof Boolean) return (boolean)object;
@@ -126,7 +144,7 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
         try {
           for(Statement stmt : statements) {
             Object value = stmt.accept(this);
-            System.out.println(stringify(value));
+            // System.out.println(stringify(value));
          }
         } catch (RuntimeError error) {
           App.runtimeError(error);
