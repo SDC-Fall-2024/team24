@@ -3,11 +3,26 @@ package com.team24.badgr;
 
 abstract class Expression {
   interface Visitor<R> {
+    R visitAssignExpression(Assign expression);
     R visitBinaryExpression(Binary expression);
     R visitGroupingExpression(Grouping expression);
     R visitLiteralExpression(Literal expression);
     R visitUnaryExpression(Unary expression);
     R visitVariableExpression(Variable expression);
+  }
+  static class Assign extends Expression {
+    Assign(Token name, Expression value) {
+      this.name = name;
+      this.value = value;
+    }
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitAssignExpression(this);
+    }
+
+    final Token name;
+    final Expression value;
   }
   static class Binary extends Expression {
     Binary(Expression left, Token operator, Expression right) {

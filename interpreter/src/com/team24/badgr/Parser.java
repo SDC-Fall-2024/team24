@@ -98,7 +98,7 @@ class Parser {
 
   private Statement expressionStatement() {
     try{
-      Expression expression = parseExpression(0);
+      Expression expression = assignment();
       consume(SEMICOLON);
       return new Statement.Expr(expression);
     } catch(Exception e) {
@@ -108,7 +108,7 @@ class Parser {
   }
   
   private Statement printStatement() {
-    Expression value = parseExpression(0);
+    Expression value = assignment();
     consume(SEMICOLON);
     return new Statement.Print(value);
   }
@@ -176,6 +176,23 @@ class Parser {
     if (parser != null) return parser.getPrecedence();
   
     return 0;
+  }
+
+  private Expression assignment() {
+    Expression left = parseExpression(0);
+    if (match(ASSIGN)) {
+      Token equals = previous();
+      Expression right = assignment();
+
+      if (left instanceof Expression.Variable) {
+        Token name = ((Expression.Variable)left).name;
+        return new Expression.Assign(name, right);
+      }
+
+      throw new ParseException("Invalid assignment target.");
+    }
+
+    return left;
   }
 
   public Expression parseExpression(int precedence) {

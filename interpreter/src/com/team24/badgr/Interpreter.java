@@ -6,6 +6,13 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
     private Environment environment = new Environment();
 
     @Override
+    public Object visitAssignExpression(Expression.Assign expr) {
+        Object value = evaluate(expr.value);
+        environment.assign(expr.name, value);
+        return value;
+    }
+
+    @Override
     public Object visitVariableExpression(Expression.Variable expr) {
         return environment.get(expr.name);
     }
