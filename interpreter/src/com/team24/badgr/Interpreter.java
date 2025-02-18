@@ -9,6 +9,7 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
     public Object visitAssignExpression(Expression.Assign expr) {
         Object value = evaluate(expr.value);
         environment.assign(expr.name, value);
+        //Theres a problem with scanner confusing eq and assign
         return value;
     }
 
@@ -121,6 +122,25 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
   
       environment.define(stmt.name.getText(), value);
       return null;
+    }
+
+    @Override
+    public Void visitBlockStatement(Statement.Block stmt) {
+      executeBlock(stmt.statements, new Environment(environment));
+      return null;
+    }
+
+    void executeBlock(List<Statement> statements, Environment environment) {
+        Environment previous = this.environment;
+        try {
+        this.environment = environment;
+
+        for (Statement statement : statements) {
+            statement.accept(this);
+        }
+        } finally {
+            this.environment = previous;
+        }
     }
 
     private boolean isTruthy(Object object) {

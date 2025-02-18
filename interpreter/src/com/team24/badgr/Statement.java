@@ -1,11 +1,25 @@
 package com.team24.badgr;
 
+import java.util.List;
 
 abstract class Statement {
   interface Visitor<R> {
+    R visitBlockStatement(Block statement);
     R visitExprStatement(Expr statement);
     R visitPrintStatement(Print statement);
     R visitVarStatement(Var statement);
+  }
+  static class Block extends Statement {
+    Block(List<Statement> statements) {
+      this.statements = statements;
+    }
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitBlockStatement(this);
+    }
+
+    final List<Statement> statements;
   }
   static class Expr extends Statement {
     Expr(Expression expression) {

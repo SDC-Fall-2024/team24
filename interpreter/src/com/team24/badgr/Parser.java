@@ -93,6 +93,7 @@ class Parser {
   private Statement statement() {
     //Substitute print with FOR to test fucntionality
     if (match(FOR)) return printStatement();
+    if (match(LBRACE)) return new Statement.Block(block());
     return expressionStatement();
   }
 
@@ -111,6 +112,17 @@ class Parser {
     Expression value = assignment();
     consume(SEMICOLON);
     return new Statement.Print(value);
+  }
+
+  private List<Statement> block() {
+    List<Statement> statements = new ArrayList<>();
+
+    while (lookAhead(0).getType() != RBRACE && !isAtEnd()) {
+      statements.add(declaration());
+    }
+
+    consume(RBRACE);
+    return statements;
   }
 
   public Token consume() {
@@ -196,6 +208,7 @@ class Parser {
   }
 
   public Expression parseExpression(int precedence) {
+
     Token token = consume();
     PrefixParselet prefix = mPrefixParselets.get(token.getType());
 
