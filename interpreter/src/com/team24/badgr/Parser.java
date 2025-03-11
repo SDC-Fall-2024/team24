@@ -92,6 +92,7 @@ class Parser {
 
   private Statement statement() {
     //Substitute print with FOR to test fucntionality
+    if (match(IF)) return ifStatement();
     if (match(FOR)) return printStatement();
     if (match(LBRACE)) return new Statement.Block(block());
     return expressionStatement();
@@ -106,6 +107,20 @@ class Parser {
       App.runtimeError(new RuntimeError(lookAhead(0), e.getMessage()));
       return null;
     }
+  }
+
+  private Statement ifStatement() {
+    consume(LPAREN);
+    Expression condition = assignment();
+    consume(RPAREN); 
+
+    Statement thenBranch = statement();
+    Statement elseBranch = null;
+    if (match(ELSE)) {
+      elseBranch = statement();
+    }
+
+    return new Statement.If(condition, thenBranch, elseBranch);
   }
   
   private Statement printStatement() {
@@ -186,12 +201,11 @@ class Parser {
     InfixParselet parser = mInfixParselets.get(
         lookAhead(0).getType());
     if (parser != null) return parser.getPrecedence();
-  
     return 0;
   }
 
   private Expression assignment() {
-    Expression left = parseExpression(0);
+    Expression left = or();
     if (match(ASSIGN)) {
       Token equals = previous();
       Expression right = assignment();
@@ -203,8 +217,31 @@ class Parser {
 
       throw new ParseException("Invalid assignment target.");
     }
-
+    
     return left;
+  }
+
+  private Expression or() {
+    Expression expr = and();
+
+    while (match(OR)) {
+      Token operator = previous();
+      Expression right = and();
+      expr = new Expression.Logical(expr, operator, right);
+    }
+
+    return expr;
+  }
+
+  private Expression and() {
+    Expression expr = parseExpression(0);
+
+    while (match(AND)) {
+      Token operator = previous();
+      Expression right = parseExpression(0);
+      expr = new Expression.Logical(expr, operator, right);
+    }
+    return expr;
   }
 
   public Expression parseExpression(int precedence) {
@@ -221,14 +258,12 @@ class Parser {
       if (infix == null) return left;
       token = consume();
       left = infix.parse(this, left, token);
-
     }
-
     return left;
   }
 
   private void synchronize() {
-    consume();
+    advance();
 
     while (!isAtEnd()) {
       if (previous().getType() == SEMICOLON) return;
@@ -244,8 +279,13 @@ class Parser {
           break;
       }
 
-      consume();
+      advance();
     }
+  }
+
+  private Token advance() {
+    if (!isAtEnd()) current++;
+    return previous();
   }
 
   private Statement varDeclaration() {
@@ -275,6 +315,14 @@ class VarParselet implements PrefixParselet {
 
 class NameParselet implements PrefixParselet {
   public Expression parse(Parser parser, Token token) {
+    if(token.getType() == TokenType.FALSE) {
+      return new Expression.Literal(false);
+    } else if(token.getType() == TokenType.TRUE) {
+      return new Expression.Literal(true);
+    } else if(token.getType() == TokenType.NIL) {
+      return new Expression.Literal(null);
+    }
+    
     return new Expression.Literal(token.getText());
   }
 }

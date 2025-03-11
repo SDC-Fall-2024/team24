@@ -51,6 +51,19 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
     }
 
     @Override
+    public Object visitLogicalExpression(Expression.Logical expr) {
+        Object left = evaluate(expr.left);
+
+        if (expr.operator.getType() == TokenType.OR) {
+        if (isTruthy(left)) return left;
+        } else {
+        if (!isTruthy(left)) return left;
+        }
+
+        return evaluate(expr.right);
+    }
+
+    @Override
     public Object visitBinaryExpression(Expression.Binary expr) {
         Object left = evaluate(expr.left);
         Object right = evaluate(expr.right); 
@@ -103,6 +116,16 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
     @Override
     public Void visitExprStatement(Statement.Expr stmt) {
         evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitIfStatement(Statement.If stmt) {
+        if (isTruthy(evaluate(stmt.condition))) {
+            stmt.thenBranch.accept(this);
+        } else if (stmt.elseBranch != null) {
+            stmt.elseBranch.accept(this);
+        }
         return null;
     }
 

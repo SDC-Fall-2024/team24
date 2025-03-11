@@ -82,7 +82,7 @@ public class App {
 
     Interpreter interpreter = new Interpreter();
 
-    if(hadError){
+    if (hadError || (statements != null && statements.size() > 0 && statements.get(0) == null)) {
       hadError = false;
       return;
     }
