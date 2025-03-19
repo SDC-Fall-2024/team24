@@ -5,7 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.team24.badgr.Statement.Expr;
+
+import java.lang.Thread.State;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 class ParseException extends RuntimeException {
   public ParseException(String message) {
@@ -93,7 +97,9 @@ class Parser {
   private Statement statement() {
     //Substitute print with FOR to test fucntionality
     if (match(IF)) return ifStatement();
-    if (match(FOR)) return printStatement();
+    if (match(PRINT)) return printStatement();
+    if (match(FOR)) return forStatement();
+    if(match(WHILE)) return whileStatement();
     if (match(LBRACE)) return new Statement.Block(block());
     return expressionStatement();
   }
@@ -127,6 +133,63 @@ class Parser {
     Expression value = assignment();
     consume(SEMICOLON);
     return new Statement.Print(value);
+  }
+
+  private Statement forStatement() {
+    consume(LPAREN);
+    Statement initializer;
+
+    if (match(SEMICOLON)) {
+      System.out.println("Empty initializer");
+      initializer = null;
+    } else if (detectVarDec()) {
+      //Works because there's only ints right now
+      consume();
+      initializer = varDeclaration();
+    } else {
+      initializer = expressionStatement();
+    }
+
+    Expression condition = null;
+    if (!match(SEMICOLON)) {
+      condition = assignment();
+    }
+    consume(SEMICOLON);
+
+    Expression increment = null;
+    if (!match(RPAREN)) {
+      increment = assignment();
+    }
+    // System.out.println("asdf" + lookAhead(0).getText());
+    consume(RPAREN);
+    Statement body = statement();
+
+    if (increment != null) {
+      body = new Statement.Block(
+          Arrays.asList(
+              body,
+              new Statement.Expr(increment)));
+    }
+
+    if (condition == null) condition = new Expression.Literal(true);
+    body = new Statement.While(condition, body);
+
+    if (initializer != null) {
+      body = new Statement.Block(Arrays.asList(initializer, body));
+    }
+
+    return body;
+
+
+  }
+
+  private Statement whileStatement() {
+    consume(LPAREN);
+    Expression condition = assignment();
+    consume(RPAREN);
+    Statement body = statement();
+
+    return new Statement.While(condition, body);
   }
 
   private List<Statement> block() {
@@ -293,7 +356,7 @@ class Parser {
     Token name = consume(IDENTIFIER);
 
     Expression initializer = null;
-    if (match(EQ)) {
+    if (match(ASSIGN)) {
       initializer = parseExpression(0);
     }
 

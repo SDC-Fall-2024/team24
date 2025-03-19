@@ -148,6 +148,14 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
     }
 
     @Override
+    public Void visitWhileStatement(Statement.While stmt) {
+        while (isTruthy(evaluate(stmt.condition))) {
+            stmt.body.accept(this);
+        }
+        return null;
+    }
+
+    @Override
     public Void visitBlockStatement(Statement.Block stmt) {
       executeBlock(stmt.statements, new Environment(environment));
       return null;
@@ -193,6 +201,7 @@ class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void>
     void interpret(List<Statement> statements) { 
         try {
           for(Statement stmt : statements) {
+            if(stmt == null) continue;
             Object value = stmt.accept(this);
             // System.out.println(stringify(value));
          }
