@@ -19,7 +19,9 @@ public class Scanner {
     keywords = new HashMap<>();
     keywords.put("true", TRUE);
     keywords.put("false", FALSE);
+    keywords.put("print", PRINT);
     keywords.put("for", FOR);
+    keywords.put("while", WHILE);
     keywords.put("return", RETURN);
     keywords.put("func", FUNCTION);
     keywords.put("if", IF);
@@ -73,7 +75,7 @@ public class Scanner {
         newToken(match('=') ? NEQ : NOT);
         break;
       case '=': // Count be ==, =
-        newToken(match('=') ? ASSIGN : EQ);
+        newToken(match('=') ? EQ : ASSIGN);
         break;
       case '(':
         newToken(LPAREN);
