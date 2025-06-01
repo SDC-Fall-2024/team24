@@ -219,7 +219,7 @@ class Parser {
     return token;
   }
 
-  private Boolean match(TokenType type) {
+  public Boolean match(TokenType type) {
     if (lookAhead(0).getType() == type) {
       consume();
       return true;
@@ -228,7 +228,7 @@ class Parser {
     return false;
   }
 
-  private Token lookAhead(int distance) {
+  public Token lookAhead(int distance) {
     if (current + distance >= tokens.size()) {
       return new Token(EOF, -1, "", null);
     }
@@ -435,4 +435,30 @@ class GroupParselet implements PrefixParselet {
     return expression;
   }
 
+}
+
+class CallParselet implements InfixParselet {
+  public Expression parse(Parser parser,
+      Expression callee, Token token) {
+
+    List<Expression> arguments = new ArrayList<>();
+
+    if (parser.lookAhead(0).getType() != TokenType.RPAREN) {
+      do {
+        if (arguments.size() >= 255) {
+          App.runtimeError(new RuntimeError(parser.lookAhead(0), "Can't have more than 255 arguments."));
+        }
+        arguments.add(parser.parseExpression(0));
+      } while (parser.match(TokenType.COMMA));
+    }
+
+    token = parser.consume(TokenType.RPAREN);
+
+    return new Expression.Call(callee, token, arguments);
+  }
+
+  @Override
+  public int getPrecedence() {
+    return Precedence.CALL;
+  }
 }

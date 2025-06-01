@@ -1,5 +1,6 @@
 package com.team24.badgr;
 
+import java.util.List;
 
 abstract class Expression {
   interface Visitor<R> {
@@ -40,6 +41,22 @@ abstract class Expression {
     final Expression left;
     final Token operator;
     final Expression right;
+  }
+  static class Call extends Expression {
+    Call(Expression callee, Token paren, List<Expression> arguments) {
+      this.callee = callee;
+      this.paren = paren;
+      this.arguments = arguments;
+    }
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitCallExpression(this);
+    }
+
+    final Expression callee;
+    final Token paren;
+    final List<Expression> arguments;
   }
   static class Grouping extends Expression {
     Grouping(Expression expression) {
