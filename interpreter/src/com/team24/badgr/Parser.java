@@ -48,7 +48,9 @@ class Parser {
     registerPrefix(TRUE, new NameParselet());
     registerPrefix(NIL, new NameParselet());
     
+    
     registerPrefix(LPAREN, new GroupParselet());
+    registerInfix(LPAREN, new CallParselet());
     prefix(PLUS);
     prefix(MINUS);
     prefix(NOT);
@@ -81,6 +83,8 @@ class Parser {
 
   private Statement declaration() {
     try {
+      if(match(FUNCTION)) return function("function");
+
       if (detectVarDec()){
         consume();
         System.out.println("Var Declaration");
@@ -98,6 +102,7 @@ class Parser {
     //Substitute print with FOR to test fucntionality
     if (match(IF)) return ifStatement();
     if (match(PRINT)) return printStatement();
+    if (match(RETURN)) return returnStatement();
     if (match(FOR)) return forStatement();
     if(match(WHILE)) return whileStatement();
     if (match(LBRACE)) return new Statement.Block(block());
@@ -113,6 +118,27 @@ class Parser {
       App.runtimeError(new RuntimeError(lookAhead(0), e.getMessage()));
       return null;
     }
+  }
+
+  private Statement.Function function(String kind) {
+    Token name = consume(IDENTIFIER);
+    consume(LPAREN);
+    List<Token> parameters = new ArrayList<>();
+    if (!match(RPAREN)) {
+      do {
+        if (parameters.size() >= 255) {
+          App.runtimeError(new RuntimeError(lookAhead(0), "Can't have more than 255 parameters."));
+        }
+
+        parameters.add(
+            consume(IDENTIFIER));
+      } while (match(COMMA));
+      consume(RPAREN);
+    }
+    
+    consume(LBRACE);
+    List<Statement> body = block();
+    return new Statement.Function(name, parameters, body);
   }
 
   private Statement ifStatement() {
@@ -133,6 +159,17 @@ class Parser {
     Expression value = assignment();
     consume(SEMICOLON);
     return new Statement.Print(value);
+  }
+
+  private Statement returnStatement() {
+    Token keyword = previous();
+    Expression value = null;
+    if (!match(SEMICOLON)) {
+      value = assignment();
+    }
+
+    consume(SEMICOLON);
+    return new Statement.Return(keyword, value);
   }
 
   private Statement forStatement() {

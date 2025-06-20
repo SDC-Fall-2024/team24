@@ -11,6 +11,7 @@ abstract class Expression {
     R visitLogicalExpression(Logical expression);
     R visitUnaryExpression(Unary expression);
     R visitVariableExpression(Variable expression);
+    R visitCallExpression(Call expression);
   }
   static class Assign extends Expression {
     Assign(Token name, Expression value) {

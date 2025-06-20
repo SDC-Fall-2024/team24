@@ -18,7 +18,7 @@ public class App {
       System.out.println("Error: not enough arguments provided");
       System.exit(1);
     } else if (args.length == 1) {
-      runFile(args[1]);
+      runFile(args[0]);
     } else {
       runRepl();
     }
@@ -83,6 +83,14 @@ public class App {
     Interpreter interpreter = new Interpreter();
 
     if (hadError || (statements != null && statements.size() > 0 && statements.get(0) == null)) {
+      hadError = false;
+      return;
+    }
+
+    Resolver resolver = new Resolver(interpreter);
+    resolver.resolve(statements);
+
+    if(hadError) {
       hadError = false;
       return;
     }
